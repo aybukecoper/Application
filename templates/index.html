@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Date Ideas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, select, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1em;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Random Date Ideas</h1>
+        <form id="dateForm">
+            <input type="text" id="name1" placeholder="Your Name" required>
+            <input type="text" id="name2" placeholder="Partner's Name" required>
+            <input type="number" id="duration" placeholder="Duration (months)" required>
+            <select id="relationship_status" required>
+                <option value="" disabled selected>Relationship Status</option>
+                <option value="married">Married</option>
+                <option value="living_together">Living Together</option>
+                <option value="dating">Dating</option>
+            </select>
+            <select id="have_kids" required>
+                <option value="" disabled selected>Do you have kids?</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            <button type="submit">Get Date Idea</button>
+        </form>
+        <button id="quickOffer">Quick Offer</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('dateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name1 = document.getElementById('name1').value;
+            const name2 = document.getElementById('name2').value;
+            const duration = document.getElementById('duration').value;
+            const relationship_status = document.getElementById('relationship_status').value;
+            const have_kids = document.getElementById('have_kids').value;
+
+            fetch('/get_date_idea', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name1, name2, duration, relationship_status, have_kids })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `Date Idea: ${data.idea}`;
+            });
+        });
+
+        document.getElementById('quickOffer').addEventListener('click', function() {
+            fetch('/quick_offer')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = `Date Idea: ${data.idea}`;
+                });
+        });
+    </script>
+</body>
+</html>
