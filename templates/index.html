@@ -5,50 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Date Ideas</title>
     <style>
+        @keyframes pop-up {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        @keyframes fireworks {
+            0% { opacity: 1; transform: scale(0); }
+            100% { opacity: 0; transform: scale(3); }
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: pink;
-            background-image: url('https://i.imgur.com/8KTKzYX.png'); /* Example heart background */
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('{{ url_for('static', filename='free-vector-heart-shaped-background-material-vector_021675_HEARTS_3948159 [Converted].jpg') }}');
             background-size: cover;
-            color: white;
+            background-position: center;
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
         .container {
             width: 50%;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #ff5252;
+            margin-bottom: 20px;
         }
         form {
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
         input, select, button {
             margin: 10px 0;
             padding: 10px;
             font-size: 1em;
-            border: none;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            width: 80%;
         }
         button {
-            background-color: red;
+            background-color: #ff5252;
             color: white;
             cursor: pointer;
+            width: 50%;
         }
         button:hover {
-            background-color: darkred;
+            background-color: #ff1744;
+        }
+        #quickOffer {
+            width: 50%;
+            margin-top: 20px;
         }
         #result {
             margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             font-size: 1.2em;
         }
         .recommendation {
             margin-top: 10px;
         }
         .recommendation a {
-            color: lightblue;
+            color: #1e88e5;
+        }
+        .date-idea {
+            color: red;
+            background: white;
+            padding: 40px; /* Double the padding size */
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: pop-up 0.5s ease-out;
+            font-size: 2em; /* Double the font size */
+            text-align: center;
+            margin: 20px auto;
+        }
+        .date-idea::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -20px; /* Adjusted for double size */
+            border-width: 20px; /* Double the border size */
+            border-style: solid;
+            border-color: transparent transparent white transparent;
+        }
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 0, 0, 1) 100%);
+            border-radius: 50%;
+            animation: fireworks 1s ease-out infinite;
+            opacity: 0;
         }
     </style>
 </head>
@@ -78,6 +146,22 @@
     </div>
 
     <script>
+        function createFireworks() {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 10; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.top = `${Math.random() * 100}%`;
+                firework.style.left = `${Math.random() * 100}%`;
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                firework.style.animationDelay = `${Math.random() * 1}s`;
+                container.appendChild(firework);
+                setTimeout(() => {
+                    firework.remove();
+                }, 1000);
+            }
+        }
+
         document.getElementById('dateForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -97,7 +181,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('result').innerHTML = `Date Idea: ${data.idea}<br><br>Recommendations:<br>`;
+                document.getElementById('result').innerHTML = `<div class="date-idea">Date Idea: ${data.idea}</div><br><br>Recommendations:<br>`;
                 data.recommendations.forEach(place => {
                     document.getElementById('result').innerHTML += `
                         <div class="recommendation">
@@ -107,6 +191,7 @@
                         </div>
                     `;
                 });
+                createFireworks();
             });
         });
 
@@ -114,7 +199,8 @@
             fetch('/quick_offer')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('result').innerText = `Date Idea: ${data.idea}`;
+                    document.getElementById('result').innerHTML = `<div class="date-idea">Date Idea: ${data.idea}</div>`;
+                    createFireworks();
                 });
         });
     </script>
